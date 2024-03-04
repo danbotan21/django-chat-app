@@ -1,0 +1,85 @@
+.log-in-parent {
+  box-sizing: border-box;
+  width: 100%;
+  height: 110vh;
+}
+
+.form-log-in {
+  background-image: linear-gradient(
+    to right,
+    rgb(195, 246, 87),
+    rgb(47, 207, 197)
+  );
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin: 200px auto 0 auto;
+  width: 500px;
+  height: auto;
+  padding: 2.5rem;
+}
+
+.content-log-in {
+  border: none;
+  outline: none;
+  margin-bottom: 20px;
+  margin-top: 35px;
+  box-shadow: none;
+  border-radius: 0;
+  border-bottom: 1px solid rgb(90, 90, 90);
+  font-size: 22px;
+}
+
+.header-content {
+  margin-bottom: 30px;
+  margin-top: 8px;
+  font-size: 32px;
+}
+
+.btn-log-in {
+  border: 1px solid black;
+  outline: none;
+  margin-top: 20px;
+  font-weight: 700;
+  background-color: transparent;
+  padding: 1rem 9rem;
+  border-radius: 20px;
+}
+
+/* Errors */
+
+.error-display {
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+  margin-bottom: -150px;
+}
+
+.error-header {
+  font-size: 23px;
+  color: rgb(201, 23, 32);
+  font-weight: 600;
+  padding: 0.4rem;
+}
+
+.success-display {
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+  margin-bottom: -150px;
+}
+
+.success-header {
+  font-size: 23px;
+  color: rgb(103, 167, 7);
+  font-weight: 600;
+  padding: 0.4rem;
+}
+
+input {
+  background-color: transparent;
+}
+
+input::placeholder {
+  color: black;
+}
