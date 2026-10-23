@@ -1,0 +1,8 @@
+Sprint planning - notes
+
+1. Finish the login and sign-up screens
+2. Real-time messages over WebSockets
+3. Photo and file sharing (max 10 MB)
+4. Write tests for the API
+
+Next meeting: Thursday, 18:00
