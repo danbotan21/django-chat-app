@@ -1,19 +1,17 @@
 import os
+
 import django
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ChatApp.settings")
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ChatApp.settings')
 django.setup()
 
-from channels.auth import AuthMiddlewareStack
-from channels.routing import ProtocolTypeRouter, URLRouter
-from django.core.asgi import get_asgi_application
-from conversation.routing import websocket_urlpatterns
+from channels.routing import ProtocolTypeRouter, URLRouter  # noqa: E402
+from django.core.asgi import get_asgi_application  # noqa: E402
 
-django_asgi_app = get_asgi_application()
+from ChatApp.ws_auth import TokenAuthMiddleware  # noqa: E402
+from conversation.routing import websocket_urlpatterns  # noqa: E402
 
 application = ProtocolTypeRouter({
-    "http": django_asgi_app,
-    "websocket": AuthMiddlewareStack(
-        URLRouter(websocket_urlpatterns)
-    ),
+    'http': get_asgi_application(),
+    'websocket': TokenAuthMiddleware(URLRouter(websocket_urlpatterns)),
 })

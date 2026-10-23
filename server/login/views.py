@@ -1,69 +1,40 @@
-from django.shortcuts import render
-from django.contrib.auth import authenticate, login, logout
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from django.contrib.auth import authenticate
 from rest_framework import status
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-
-from .serializer import LogInSerializer
-from signup.models import CreateUser
+from signup.serializer import PublicUserSerializer
 
 
 class User(APIView):
-    
-    def generate_token(self, user):
-        token_generator = PasswordResetTokenGenerator()
-        return token_generator.make_token(user)
-    
+    """Log in with email + password and get an API token."""
+    permission_classes = [AllowAny]
+
     def post(self, request, *args, **kwargs):
-        email = request.data.get('email', None)
-        password = request.data.get('password', None)
+        email = request.data.get('email')
+        password = request.data.get('password')
 
-        # Verifică dacă datele sunt furnizate
         if not email or not password:
-            return Response({'error': 'Email și parolă sunt necesare'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Email and password are required.'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            # Verifică dacă utilizatorul există
-            user = CreateUser.objects.get(email=email)
-        except CreateUser.DoesNotExist:
-            return Response({'error': 'Nu există un cont cu acest email'}, status=status.HTTP_404_NOT_FOUND)
-
-        # Autentifică utilizatorul cu parola furnizată
         user = authenticate(request, email=email, password=password)
-        if user is not None:
-        
-            login(request, user)
-            
-            token = self.generate_token(user)
-            
-            
-            friends_data = user.friends.values('id', 'username', 'email', 'user_picture')
-            
-            
-    
-            # Construiește răspunsul JSON pentru succesul autentificării4
-            response = {
-                'message': 'Autentificare reușită',
-                'username': user.username,
-                'image': user.user_picture.url if user.user_picture else '',
-                'userId': user.id,
-                'friends': list(friends_data),
-                'token': token,
-            }
+        if user is None:
+            return Response({'error': 'Wrong email or password.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
 
-            return Response(response, status=status.HTTP_200_OK)
-        else:
-            # Dacă autentificarea a eșuat, returnează un mesaj de eroare
-            return Response({'error': 'Emailul sau parola nu corespund   cu un cont valid'}, status=status.HTTP_401_UNAUTHORIZED)
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key, 'user': PublicUserSerializer(user).data})
 
+
+class Me(APIView):
+    def get(self, request):
+        return Response(PublicUserSerializer(request.user).data)
 
 
 class Logout(APIView):
     def post(self, request, *args, **kwargs):
-            logout(request)
-            return Response({'message': 'Deconectare reușită'}, status=status.HTTP_200_OK)
-  
-        
+        Token.objects.filter(user=request.user).delete()
+        return Response({'message': 'Logged out.'})

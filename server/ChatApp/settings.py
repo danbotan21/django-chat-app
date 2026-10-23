@@ -1,6 +1,5 @@
 from pathlib import Path
 import os
-import http
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -12,8 +11,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-only-insecure-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-ALLOWED_HOSTS = []
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -22,7 +21,6 @@ INSTALLED_APPS = [
     'daphne',
     'channels',
     'corsheaders',
-    'djangochannelsrestframework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -30,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'conversation',
     'signup',
     'login'
@@ -138,7 +137,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ORIGIN_ALLOW_ALL = True
+# the API uses tokens, not cookies, so any frontend origin may call it
+CORS_ALLOW_ALL_ORIGINS = True
 
 CHANNEL_LAYERS = {
     'default': {
@@ -148,23 +148,22 @@ CHANNEL_LAYERS = {
 
 AUTH_USER_MODEL = 'signup.CreateUser'
 
-
-
-
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'ChatApp.email_backend.EmailBackend',
 ]
 
-
-
-
-
-CsrfResponseMiddleware = 'django.middleware.csrf.CsrfResponseMiddleware'
-
-
-
-
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
 
+# every API call needs a token (Authorization: Token <key>), except signup and login
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
