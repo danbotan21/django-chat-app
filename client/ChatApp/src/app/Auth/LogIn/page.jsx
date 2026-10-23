@@ -3,10 +3,11 @@ import { useState, useContext } from 'react'
 import Style from './style.css'
 import { Chat } from '../../(chatapp)/page'
 import { DateleUseruluiContext } from '@/app/layout'
+import { API_URL } from '../../../config'
 
 export const logOut = async () => {
   try {
-    const resp = await fetch(`http://127.0.0.1:8000/auth/log-out/`, {
+    const resp = await fetch(`${API_URL}/auth/log-out/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -32,7 +33,7 @@ export default function LogIn() {
     event.preventDefault()
 
     try {
-      const resp = await fetch(`http://127.0.0.1:8000/auth/login/`, {
+      const resp = await fetch(`${API_URL}/auth/login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

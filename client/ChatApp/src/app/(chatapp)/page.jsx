@@ -13,6 +13,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 
 import { logOut } from '../Auth/LogIn/page'
+import { API_URL, WS_URL } from '../../config'
 
 const FriendList = ({
   setMessages,
@@ -36,7 +37,7 @@ const FriendList = ({
   const displayConversationWithAFriend = async (friendId) => {
     try {
       const resp = await axios.get(
-        `http://127.0.0.1:8000/conversation/?userId=${userId}&friendUserId=${friendId}`,
+        `${API_URL}/conversation/?userId=${userId}&friendUserId=${friendId}`,
       )
       const { data } = resp
       if (data.errorMessage) {
@@ -62,7 +63,7 @@ const FriendList = ({
   const getLastMesage = async (friendId) => {
     try {
       const resp = await axios.get(
-        `http://127.0.0.1:8000/conversation/last-message/?userId=${userId}&friendUserId=${friendId}`,
+        `${API_URL}/conversation/last-message/?userId=${userId}&friendUserId=${friendId}`,
       )
 
       const { data } = resp
@@ -113,7 +114,7 @@ const FriendList = ({
           >
             <span className='person-image'>
               <img
-                src={`http://localhost:8000/media/${friend.user_picture}`}
+                src={`${API_URL}/media/${friend.user_picture}`}
                 alt={friend.username}
                 className='person-image'
               />
@@ -158,7 +159,7 @@ const ChatConversation = ({
     }
 
     const ws = new WebSocket(
-      `ws://localhost:8000/ws/chat/${userId}/${friendUserId}/`,
+      `${WS_URL}/ws/chat/${userId}/${friendUserId}/`,
     )
 
     ws.onopen = () => {
@@ -231,7 +232,7 @@ const ChatConversation = ({
 
     try {
       const resp = await axios.post(
-        `http://127.0.0.1:8000/conversation/send-image/`,
+        `${API_URL}/conversation/send-image/`,
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } },
       )
@@ -251,7 +252,7 @@ const ChatConversation = ({
 
     try {
       const resp = await axios.post(
-        `http://127.0.0.1:8000/conversation/send-file/`,
+        `${API_URL}/conversation/send-file/`,
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } },
       )
@@ -305,7 +306,7 @@ const ChatConversation = ({
                     <span className='image-time'>
                       {message.user && message.user.user_picture ? (
                         <img
-                          src={`http://localhost:8000${message.user.user_picture}`}
+                          src={`${API_URL}${message.user.user_picture}`}
                           className='img-conversation'
                           alt={`${message.user.username}`}
                         />
@@ -332,7 +333,7 @@ const ChatConversation = ({
                     {message.image ? (
                       <div className='image-sent'>
                         <img
-                          src={`http://localhost:8000/media/${message.image}`}
+                          src={`${API_URL}/media/${message.image}`}
                           alt='Sent image'
                           className='sent-image'
                         />
@@ -341,7 +342,7 @@ const ChatConversation = ({
 
                     {message.files ? (
                       <a
-                        href={`http://localhost:8000/media/${message.files}`}
+                        href={`${API_URL}/media/${message.files}`}
                         target='_blank'
                         rel='noopener noreferrer'
                         className='link'
@@ -434,7 +435,7 @@ export const Chat = () => {
         <div className='our-account-detail'>
           <div className='details-profile'>
             <img
-              src={`http://localhost:8000${userPicture}`}
+              src={`${API_URL}${userPicture}`}
               alt={storedUsername}
               className='user-image'
             />

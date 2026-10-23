@@ -1,8 +1,9 @@
+import { API_URL } from '../../../config'
 const onSubmitFormSignUp = async (data) => {
   event.preventDefault()
 
   try {
-    const resp = await fetch(`http://127.0.0.1:8000/signup/create-users/`, {
+    const resp = await fetch(`${API_URL}/signup/create-users/`, {
       method: 'POST',
       body: data,
     })
